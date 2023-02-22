@@ -1,3 +1,3 @@
 # Data-Structures-Algorithms-Sixth-Edition-Exercises-Solutions
-These solutions aren't optimal solutions because these are my solutions. I am reading each chapter and then solving each exercise.
+I don't know whether these solutions are optimal solutions because I try to solve them as best I can.
 So I hope these solutions help you :)
