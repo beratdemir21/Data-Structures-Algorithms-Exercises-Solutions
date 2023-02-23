@@ -9,7 +9,7 @@ public class BarChart {
 	private int[] alphabetCounter;
 	private int k;
 	public BarChart() {
-		
+	
 		// A aB bC cD dE eF fG gH hI iJ jK kL lM mN nO oP pQ qR rS sT tU uV vW wX xY yZ z		
 		//Initializing both array because their size same and size alphabet is constant
 		alphabet = new char[26];
@@ -68,15 +68,12 @@ public class BarChart {
 		}catch(FileNotFoundException e) {
 			System.out.println("An error occured.");
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 	
 	//Counts each letter in the given string, then increments the value 
 	//in the cell corresponding to each letter in the alphaCounter array
-	public void countLetter(String str) {
-	
-		//"beratdemir"
+	public void countLetter(String str) {	
 		char c;
 		for (int i = 0; i < str.length(); i++) {
 			c = Character.toLowerCase(str.charAt(i));			
