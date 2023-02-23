@@ -11,7 +11,7 @@ public class BarChart {
 	public BarChart() {
 	
 		// A aB bC cD dE eF fG gH hI iJ jK kL lM mN nO oP pQ qR rS sT tU uV vW wX xY yZ z		
-		//alphabet and alpahabetCounter arrays must be the same length as the english alphabet string
+		//alphabet and alpahabetCounter arrays must be the same length as the English alphabet string
 		alphabet = new char[26];
 		alphabetCounter = new int[26];
 		k = 0;
