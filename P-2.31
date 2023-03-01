@@ -1,0 +1,439 @@
+package chapter_2_exercises;
+
+import java.util.Random;
+
+public class Ecosystem{
+	
+	private Object creature;
+	
+	public Ecosystem() {}
+	
+	public Ecosystem(Object creature) {
+
+		this.creature = creature;				
+	}
+	
+	//Program searches through the ecosystem's array of objects 
+	//may receive a Null Pointer Exception error message.
+	//So it makes more sense to solve the problem by splitting the array into smaller pieces.
+	
+	//Returns a sub array of Ecosystem 
+	//sub array's length is 3, 4 or 5
+	public Object[] subEcosystem(int index, Object[] animalsEcosystem) {
+		
+		int i = 0;
+		
+		Object[] subAnimalsObject; 
+		int sizeOfArr = animalsEcosystem.length;
+		
+		if (index == 0) {
+			subAnimalsObject = new Object[3];
+			
+			for (i = 0; i < 3; i++) 
+				subAnimalsObject[i] = animalsEcosystem[i]; 
+		
+		}else if (index == sizeOfArr - 1) {
+			subAnimalsObject = new Object[3];
+			
+			for (i = 0; i < 3; i++) 
+				subAnimalsObject[i] = animalsEcosystem[sizeOfArr - 3 + i];
+		
+		}else if (index == 1) {
+			subAnimalsObject = new Object[4];
+			
+			for (i = 0; i < 4; i++)  
+				subAnimalsObject[i] = animalsEcosystem[i];			
+		
+		}else if (index == sizeOfArr - 2) {
+			subAnimalsObject = new Object[4];		
+			
+			for (i = 0; i < 4; i++) 
+				subAnimalsObject[i] = animalsEcosystem[sizeOfArr - 4 + i];	 	
+		
+		} else {
+			subAnimalsObject = new Object[5];
+			
+			for (i = 0; i < 5; i++) 
+				subAnimalsObject[i] = animalsEcosystem[index - 2 + i];		
+		}	
+		
+		return subAnimalsObject;
+	}
+	
+	//Returns reverse of an array 
+	public Object[] reverseArray(Object[] subArray) {
+
+		Object temp;
+		int first = 0;
+		int last = subArray.length - 1;		
+		for (int i = 0; i < subArray.length / 2; i++) {
+			temp = subArray[first];
+			subArray[first++] = subArray[last];
+			subArray[last--] = temp;		
+		}		
+		return subArray;
+	}
+	
+	//If index equal 0 or ecosystem's last index of element 
+	//program runs on sub-array with  length 3
+	public Object[] startFirstItemOrLastItemObjectArr(int index, Object[] subArray) {
+
+		boolean state = false;
+		
+		if (index != 0) { 
+			state = true;
+			index = 0;
+		}			
+		
+		if (state) {			
+			subArray = reverseArray(subArray);			
+		}
+		
+		if (subArray[1] == null && subArray[2] == null) { 
+			subArray[1] = subArray[0];
+			subArray[0] = null;
+			
+		}else if (subArray[1] == null && subArray[2] != null) {			
+			if (checkInstanceOf(subArray[0]) == checkInstanceOf(subArray[2])) {
+				subArray = creatObject(0, 1, subArray);
+			}else {
+				subArray = killTheFish(0, 2, subArray); 
+			}				
+		}
+		
+		if (state) {			
+			subArray = reverseArray(subArray);			
+		}		
+		return subArray;
+	}
+	
+	//If index equal 1 or ecosystem's second from last index of element 
+	//program runs on sub-array with  length 4
+	public Object[] startSecondItemOrSecondFromLastItemObjectArr(int index, Object[] subArray) {
+		
+		int nullIndex = 0;
+		
+		boolean state = false;
+		
+		if (index != 1) {
+			state = true;
+			index = 1;
+		}
+		
+		if (state) {			
+			subArray = reverseArray(subArray);			
+		}
+		
+		if (subArray[index - 1] == null && subArray[index + 1] == null) {
+			
+			nullIndex = selectRandomIndex(index - 1, index + 1);
+			// index -1 = 0
+			if (nullIndex == index - 1) { 
+				subArray[index - 1] = subArray[index];
+				subArray[index] = null; 
+			}else {
+				if (subArray[index + 2] == null) {			 	 	 
+					subArray[index + 1] = subArray[index];
+					subArray[index] = null;
+				}else {
+					if (checkInstanceOf(subArray[index]) == checkInstanceOf(subArray[index + 2])) {
+						subArray = creatObject(index, index + 1, subArray);
+						
+					}else {						
+						subArray = killTheFish(index, index + 2, subArray);
+					}
+				} 
+			}			
+		}else if(subArray[index - 1] == null && subArray[index + 1] != null) {			
+			subArray = moveObjct(index, index - 1, subArray);
+			
+		}else if (subArray[index - 1] != null && subArray[index + 1] == null) {
+			
+			if (subArray[index + 2] == null) { 
+				subArray = moveObjct(index, index + 1, subArray);
+				
+			}else {
+				if (checkInstanceOf(subArray[index]) == checkInstanceOf(subArray[index + 2])) {
+					subArray = creatObject(index, index + 1, subArray);
+					
+				}else {						
+					subArray = killTheFish(index, index + 2, subArray);
+				}
+			}			
+		}
+		
+		if (state) {			
+			subArray = reverseArray(subArray);			
+		}
+		return subArray;		
+	}
+	
+	//if the index between second - third from last index of element 
+	//program runs on sub-array with length 5
+	public Object[] startInTheMiddle(int index, Object[] subArray) {	
+
+		int prev = index - 1;
+		int next = index + 1;
+		int nullIndex; 
+		
+		if (subArray[prev] == null && subArray[next] == null) {
+			nullIndex = selectRandomIndex(prev, next);
+			
+			if(nullIndex == prev) {
+				if (subArray[prev - 1] == null) {
+					subArray = moveObjct(index, prev, subArray);
+				}else {
+					if (checkInstanceOf(subArray[prev - 1]) != checkInstanceOf(subArray[index])) {						
+						subArray = killTheFish(index, prev - 1, subArray);
+						
+					}else {
+						subArray = creatObject(index, prev, subArray);							
+					}
+				}			 
+			}else {
+				if (subArray[next + 1] == null) {
+					subArray = moveObjct(index, next, subArray);
+				}else {
+					if (checkInstanceOf(subArray[index]) != checkInstanceOf(subArray[next + 1])) {						
+						subArray = killTheFish(index, next + 1, subArray);
+					}else {
+						subArray = creatObject(index, next, subArray);							
+					}
+				}
+			}
+		}else if (subArray[prev] == null && subArray[next] != null) {
+			if (subArray[prev-1] == null) {
+				subArray = moveObjct(index, prev, subArray);
+			}else {
+				if (checkInstanceOf(subArray[index]) != checkInstanceOf(subArray[prev - 1])) {
+					subArray = killTheFish(index, prev-1, subArray);
+				}else {
+					subArray = creatObject(index, prev, subArray);
+				}
+			}
+				
+		}else if (subArray[prev] != null && subArray[next] == null) {
+			if (subArray[next + 1] == null) {
+				subArray = moveObjct(index, next, subArray);
+			}else {
+				if (checkInstanceOf(subArray[index]) != checkInstanceOf(subArray[next + 1])) {
+					subArray = killTheFish(index, next + 1, subArray);
+				}else {
+					subArray = creatObject(index, next, subArray);
+				}
+			}				
+		}	
+		return subArray;
+	}
+
+	//If a bear and a fish collide on null position then fish dies 
+	public Object[] killTheFish(int index_1, int index_2, Object[] subArray) {
+		
+		if (checkInstanceOf(subArray[index_1]) == 'B')
+			subArray[index_2] = null; 
+		else
+			subArray[index_1] = null;
+		return subArray;
+	}
+	
+	//After process on sub-array sub-array
+	//each sub-array element go back its old place 
+	public Object[] combineObjectArrays(int index, Object[] subAnimalObject, Object[] animalsEcosystem) {		
+		
+		if (index == 0)
+			index = 0;
+		else if (index == animalsEcosystem.length - 1)
+			index = animalsEcosystem.length - 3;
+		else if (index == 1)
+			index = 0;
+		else if (index == animalsEcosystem.length - 2)
+			index = animalsEcosystem.length - 4;
+		else {
+			index = index - 2;
+		}
+		
+		
+		for (int i = 0; i < subAnimalObject.length; i++) 
+			animalsEcosystem[index + i] = subAnimalObject[i]; 
+		 
+		return animalsEcosystem;
+	}
+	
+	//Simulates ecosystem 
+	public Object[] simulateEcosystem(int index, Object[] animalsEcosystem) {
+		
+		int lengthOfEcosystem = animalsEcosystem.length;
+		
+		if (index < 0) {
+			System.out.println("No more place for animals.");
+			System.exit(0);
+		}			
+		
+		Object[] subArray = subEcosystem(index, animalsEcosystem);
+	
+		if (index == 0) {
+			subArray = startFirstItemOrLastItemObjectArr(0, subArray);				
+			
+		}else if (index == lengthOfEcosystem - 1) {
+			subArray = startFirstItemOrLastItemObjectArr(lengthOfEcosystem - 1, subArray);
+			
+		}else if (index == 1) {
+			subArray = startSecondItemOrSecondFromLastItemObjectArr(1, subArray);
+			
+		}else if (index == lengthOfEcosystem - 2) {
+			subArray = startSecondItemOrSecondFromLastItemObjectArr(lengthOfEcosystem - 2, subArray);
+			
+		}else {
+			subArray = startInTheMiddle(2, subArray);
+		}
+		
+		System.out.println("index : " + index);
+		System.out.println("Sub-array's length : " + subArray.length);
+		animalsEcosystem = combineObjectArrays(index, subArray, animalsEcosystem);
+		return animalsEcosystem;		
+	}
+	
+	//If two creatures are same type and collide on null place then
+	//creates an object same type and put it in null place
+	public Object[] creatObject(int indexAvailableObj, int indexCreateObj, Object[] animalsEcosystem) {
+
+		
+		if (checkInstanceOf(animalsEcosystem[indexAvailableObj]) == 'B') {
+			animalsEcosystem[indexCreateObj] = new Bear("bear");
+			
+		}else {  
+			animalsEcosystem[indexCreateObj] = new Fish("fish");	
+		}
+		return animalsEcosystem;
+	}
+	
+	//If has a null place then creature move to null place 
+	public Object[] moveObjct(int indexAvailableObj, int indexNullObj, Object[] animalsEcosystem) {
+		
+		animalsEcosystem[indexNullObj] = animalsEcosystem[indexAvailableObj];
+		animalsEcosystem[indexAvailableObj] = null;
+		
+		return animalsEcosystem;
+	}
+	
+	//Returns creature
+	public Object getCreature() {
+		return creature;
+	}
+	
+	//Initializes Ecosystem's object
+	public void setCreature(Object creature) {
+		this.creature = creature;
+	}
+	
+	//Generate random integer number 
+	public static int getRandomIndex(Object[] animalsEcosystem) {	
+
+		int i;
+		Random rand = new Random();	
+		int index = rand.nextInt(animalsEcosystem.length);		
+		
+		for (i = 0; i < animalsEcosystem.length; i++)
+			if (animalsEcosystem[i] == null)
+				break;
+			if (i == animalsEcosystem.length-1)
+				return -1;
+		
+		while (animalsEcosystem[index] == null) {			
+			index = rand.nextInt(animalsEcosystem.length);
+		}			
+		
+		return index;
+	}
+
+	//If creature have two choose then chooses one of both randomly   
+	public int selectRandomIndex(int index_1, int index_2) {
+
+		Random random = new Random();
+		
+		int[] arr = new int[2]; 
+		arr[0] = index_1;
+		arr[1] = index_2;
+		
+		return arr[random.nextInt(arr.length)];
+	}
+	
+	//Checks instance creature
+	public char checkInstanceOf(Object creature) {
+		if (creature instanceof Bear)
+			return 'B';
+		else if (creature instanceof Fish)
+			return 'F';	
+		else
+			return 'N';
+	}
+
+	// Runs Ecosystem
+	public static void main(String[] args) { 
+		String anm = "";
+		int index = 0;
+		Random random = new Random();
+		String[] animals = {"bear", "fish"};
+		
+		Object[] animalsEcosystem = new Object[10];
+		
+		//initialize ecosystem
+		for (int i = 0; i < 5; i++) {
+			anm = animals[random.nextInt(animals.length)];
+			index = random.nextInt(animalsEcosystem.length);
+			if (anm == "bear")
+				animalsEcosystem[index] = new Bear(anm);
+			else
+				animalsEcosystem[index] = new Fish(anm);
+		}
+		
+		System.out.println("The ecosystem was randomly started");
+		
+		//Type checks for works properly 
+		for (int i = 0; i < 10; i++) {
+			if (animalsEcosystem[i] instanceof Bear)
+				System.out.print(((Bear)animalsEcosystem[i]).b + " ");
+			else if (animalsEcosystem[i] instanceof Fish)
+				System.out.print(((Fish)animalsEcosystem[i]).f + " ");
+			else {
+				System.out.print(null + " ");
+			}
+		}
+		System.out.println("\n-------------------------------------------------");
+		
+		Ecosystem obj = new Ecosystem();
+		
+		for (int i = 0; i < 20; i++) {
+			
+			index = getRandomIndex(animalsEcosystem);
+			
+			animalsEcosystem = obj.simulateEcosystem(index, animalsEcosystem);
+			
+			for (int j = 0; j < 10; j++) {
+				if (animalsEcosystem[j] instanceof Bear)
+					System.out.print(((Bear)animalsEcosystem[j]).b + " ");
+				else if (animalsEcosystem[j] instanceof Fish)
+					System.out.print(((Fish)animalsEcosystem[j]).f + " ");
+				else {
+					System.out.print(null + " ");
+				}
+			}
+			System.out.println("\n--------------------------------------------------");
+		}	
+	}
+}
+
+//Creature type Bear
+class Bear {
+	String b;
+	Bear(String b){
+		this.b = b;
+	}
+}
+//Creature type Fish
+class Fish{
+	String f;
+	Fish(String f){
+		this.f = f;
+	}
+}
