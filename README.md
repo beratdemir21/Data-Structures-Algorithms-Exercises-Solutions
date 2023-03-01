@@ -1,3 +1,3 @@
-# Data-Structures-Algorithms-Sixth-Edition-Exercises-Solutions
+# Data-Structures-Algorithms-Sixth-Edition-Exercises-Solutions-In-Java
 I don't know whether these are optimal solutions because I try to solve them as best I can.
 So I hope these solutions help you :)
