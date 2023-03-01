@@ -166,7 +166,7 @@ public class Ecosystem{
 		return subArray;		
 	}
 	
-	//if the index between second - third from last index of element 
+	//If the index from the second to the third of the ecosystemOject array
 	//program runs on sub-array with length 5
 	public Object[] startInTheMiddle(int index, Object[] subArray) {	
 
