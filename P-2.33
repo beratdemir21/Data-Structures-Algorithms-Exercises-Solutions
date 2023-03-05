@@ -1,0 +1,234 @@
+package ebook_reader;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+import java.util.Random;
+
+public class EbookReader {
+
+	private ArrayList<String> listOfBooks; 
+	
+	public EbookReader() {}	
+	
+	//We have to have a library for books therefore first we should create a file that stores all books' name
+	//If the file already is exists we get a appropriate message
+	public void createFile(String fileName) {
+		
+		File fileObj = null;
+		
+		try {
+			fileObj = new File(fileName);
+			System.out.println("-----------------/////// Status File ////////----------------------");	
+			
+			if (fileObj.createNewFile()) 
+				System.out.println("File is created : " + fileObj.getName());
+			else
+				System.out.println("File already exists");
+			System.out.println("-----------------------------------------------------------");	
+		}catch(IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	//Reads all books from library file then writes them to array-list
+	public void readFromFile(String fileName) {
+		
+		try {
+			File fileObj = new File(fileName);
+			
+			Scanner reader = new Scanner(fileObj);
+			
+			listOfBooks = new ArrayList<String>();
+			
+			while (reader.hasNextLine()) {
+				listOfBooks.add(reader.nextLine());
+			}
+			reader.close();
+			System.out.println("Reading successfully");
+		}catch(IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	//Display all books 
+	public void displayListOfBooks() {
+		System.out.println("List of books are reading...");
+		for (String book : listOfBooks) {
+			System.out.println(book);
+		}
+		System.out.println("\nreading is completed.");			
+	}
+	
+	//Checks the book whether exists in the user book list
+	public boolean isSameBook(ArrayList<String> nameOfBooks, String bookeName) {
+
+		for (int i = 0; i < nameOfBooks.size(); i++) {			
+			if (nameOfBooks.get(i).equals(bookeName))
+				return false; 
+		}		 
+		return true;
+	}
+	
+	//Creates Users object then adds array-list of the books selected randomly to the user's library 
+	public Users[] initializeUsers(Users[] userArray) {
+		
+		int number = 0;
+		String book = null;
+		Random random = new Random();
+		ArrayList<String> purchasedBooks = new ArrayList<String>();
+		ArrayList<Boolean> readBooks = new ArrayList<Boolean>();
+		
+		for (int i = 0; i < userArray.length; i++) {
+			purchasedBooks = new ArrayList<String>();
+			readBooks = new ArrayList<Boolean>();
+			number = random.nextInt(1, 15);
+			
+			for (int j = 0; j < number; j++) {
+				 
+				book = listOfBooks.get(random.nextInt(listOfBooks.size()));
+				
+				if (isSameBook(purchasedBooks, book)) {	
+					purchasedBooks.add(book);
+					readBooks.add(random.nextBoolean());
+				}
+			}
+			//I have to clone both array-list because when I pass both to Users class and then
+			//clear both array-list without clone then all items are deleted before passing Users class
+			//When array-list passed to an method then it is passed by reference 
+			//To overcome this problem, it is necessary to clone the collection and pass it to the method.
+			userArray[i] = new Users((ArrayList<String>)purchasedBooks.clone(), (ArrayList<Boolean>)readBooks.clone(), "User_" + (i+1));
+			
+			purchasedBooks.clear();
+			readBooks.clone();
+		}
+		
+		return userArray;
+	}
+	
+	//Finally, tests EBookReader.
+	public static void main(String[] args) {
+		
+		EbookReader eReader  = new EbookReader();
+		eReader.createFile("listOfBooks.txt");
+		eReader.readFromFile("listOfBooks.txt");
+		//eReader.displayListOfBooks();		
+
+		System.out.println("---------------------*****-----------------------");
+		//Creates Users array for EBookReader
+		Users[] userArray = new Users[10];		
+		
+		//Then, For each user selects at least one or more books for user's library randomly
+		userArray = eReader.initializeUsers(userArray);
+		
+		//Displays each user's library
+		for (Users user : userArray) {
+			System.out.println("\n============================== "+ user.id +" ==================================\n");
+			user.displayBooksList();
+		}
+		
+		Random random = new Random();
+		
+		//Tests a book buying and selecting a user for testing		
+		Users aUser = userArray[1];
+		
+		//Selects a book randomly from library text file
+		String aBook = eReader.listOfBooks.get(random.nextInt(eReader.listOfBooks.size()));
+		
+		//If selected book isn't in the user's library then the user buys this book
+		while (true) { 
+			if (eReader.isSameBook(aUser.purchasedBooks, aBook)) {
+				aUser.purchasedBooks.add(aBook);
+				aUser.readBooks.add(false);
+				System.out.println("\n\nCongratulations! Purchase completed successfully : " + aBook + "\n");
+				break;
+			}else {
+				aBook = eReader.listOfBooks.get(random.nextInt(eReader.listOfBooks.size()));
+			} 
+		}
+		System.out.println("\n============================== "+ aUser.id +" ==================================\n");
+		aUser.displayBooksList();
+		
+		
+		//Tests reading a book		
+		boolean state = true;
+		
+		for (int i = 0; i < aUser.readBooks.size(); i++) {
+			
+			if (!aUser.readBooks.get(i)) {
+				aUser.readBooks.set(i, true);
+				System.out.println("\nYou began to read this book : " + aUser.purchasedBooks.get(i));
+				state = false;
+				break;
+			}
+		}
+		
+		if (state) {
+			System.out.println("You already read all books.");
+		}
+		System.out.println("\n============================== "+ aUser.id +" ==================================\n");
+		aUser.displayBooksList();
+	}
+	
+}
+
+
+class Users {
+	
+	String id;
+	
+	//Stores books status for whether books are read  	
+	ArrayList<Boolean> readBooks;
+	
+	//Stores books' name 
+	ArrayList<String> purchasedBooks;	
+	
+	Users() {}
+	
+	//Each user should initialize their own library
+	Users(ArrayList<String> purchasedBooks, ArrayList<Boolean> readBooks, String id) {
+		this.id = id;
+		this.readBooks = readBooks;
+		this.purchasedBooks = purchasedBooks;
+	}
+	
+	//User can buys a book
+	void buy(String bookeName, boolean read) {
+		purchasedBooks.add(bookeName);
+		readBooks.add(false);
+	}
+	
+	//User can read a book
+	void read(String bookeName) {
+		
+		boolean isExistsBook = false;
+		
+		for (int i = 0; i < purchasedBooks.size(); i++) {		
+			if (purchasedBooks.get(i).equals(bookeName)) {
+				isExistsBook = true;
+				readBooks.set(i, true);
+				System.out.println("Congratulations! you have start to read a new book.");
+				break;
+			}
+		}		
+		
+		if (!isExistsBook) {
+			System.out.println("Ops! The book wasn't found in your purchased list.");
+		}
+	}
+	
+	//User displays its own library  
+	void displayBooksList() {
+		
+		for (int i = 0; i < purchasedBooks.size(); i++) {
+			System.out.println("Name : " + purchasedBooks.get(i) + 
+								"\nStatus : " + (readBooks.get(i) ?  "Read..." : "Not Yet Read."));
+			System.out.println("---------------------*****-----------------------");
+		}
+	}
+	
+}
+ 
