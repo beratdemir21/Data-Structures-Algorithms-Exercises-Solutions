@@ -178,13 +178,13 @@ public class EbookReader {
 
 class Users {
 	
-	String id;
+	private String id;
 	
 	//Stores books status for whether books are read  	
-	ArrayList<Boolean> readBooks;
+	private ArrayList<Boolean> readBooks;
 	
 	//Stores books' name 
-	ArrayList<String> purchasedBooks;	
+	private ArrayList<String> purchasedBooks;	
 	
 	Users() {}
 	
