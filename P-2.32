@@ -335,7 +335,7 @@ public class AdvencedEcosystem{
 		return animalsEcosystem;
 	}
 	
-	//If has a null place then creature move to null place 
+	//If there is a null place then the creature moves to the null place 
 	public Object[] moveObjct(int indexAvailableObj, int indexNullObj, Object[] animalsEcosystem) {
 		
 		animalsEcosystem[indexNullObj] = animalsEcosystem[indexAvailableObj];
